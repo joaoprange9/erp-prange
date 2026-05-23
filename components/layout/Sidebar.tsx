@@ -1,124 +1,133 @@
 "use client";
 
 import Link from "next/link";
+
 import { usePathname } from "next/navigation";
 
 import {
+
   LayoutDashboard,
   Users,
   Building2,
-  ClipboardList,
+  FileText,
+  Factory,
   Wallet,
-  Package,
-  ChevronRight,
+  Boxes,
+
 } from "lucide-react";
 
 const menus = [
+
   {
     title: "Dashboard",
-    href: "/dashboard",
+    href: "/",
     icon: LayoutDashboard,
   },
+
   {
     title: "Clientes",
     href: "/clientes",
     icon: Users,
   },
+
   {
     title: "Obras",
     href: "/obras",
     icon: Building2,
   },
+
   {
     title: "Orçamentos",
     href: "/orcamentos",
-    icon: ClipboardList,
+    icon: FileText,
   },
+
+  {
+    title: "Produção",
+    href: "/producao",
+    icon: Factory,
+  },
+
   {
     title: "Financeiro",
     href: "/financeiro",
     icon: Wallet,
   },
+
   {
     title: "Estoque",
     href: "/estoque",
-    icon: Package,
+    icon: Boxes,
   },
+
 ];
 
 export default function Sidebar() {
 
-  const pathname = usePathname();
+  const pathname =
+    usePathname();
 
   return (
 
     <aside
       className="
-        hidden
-        lg:flex
-        w-[250px]
+        w-[280px]
         min-h-screen
-        flex-col
-        px-5
-        py-6
-        border-r
-        border-white/5
-        bg-black/20
-        backdrop-blur-3xl
+        bg-[#050505]
+        border-r border-white/10
+        p-5
+        flex flex-col
       "
     >
 
-      {/* TOPO */}
+      {/* LOGO */}
 
-      <div className="mb-14 px-2">
+      <div className="mb-10">
 
-        <div className="flex items-center gap-4">
+        <p
+          className="
+            text-green-400
+            uppercase
+            tracking-[5px]
+            text-xs
+            font-black
+          "
+        >
+          PRANGE ERP
+        </p>
 
-          <div
-            className="
-              w-11
-              h-11
-              rounded-2xl
-              bg-white
-              text-black
-              flex
-              items-center
-              justify-center
-              font-black
-              text-sm
-            "
-          >
+        <h1
+          className="
+            text-white
+            text-3xl
+            font-black
+            mt-3
+            leading-none
+          "
+        >
+          PRANGE
+          <br />
+          BLOCO BR
+        </h1>
 
-            PB
-
-          </div>
-
-          <div>
-
-            <p className="text-[11px] uppercase tracking-[0.25em] text-zinc-500">
-              PRANGE ERP
-            </p>
-
-            <h1 className="text-white text-lg font-semibold mt-1 tracking-tight">
-              PrangeBlocoBR
-            </h1>
-
-          </div>
-
-        </div>
+        <p className="text-zinc-500 mt-4 text-sm leading-6">
+          Sistema integrado industrial
+          para fábrica e construtora.
+        </p>
 
       </div>
 
       {/* MENU */}
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-2">
 
         {menus.map((item) => {
 
           const active =
             pathname === item.href;
 
-          const Icon = item.icon;
+          const Icon =
+            item.icon;
 
           return (
 
@@ -127,54 +136,36 @@ export default function Sidebar() {
               href={item.href}
               className={`
                 group
-                flex
-                items-center
-                justify-between
-                px-4
-                h-[56px]
-                rounded-2xl
+                flex items-center gap-4
+                px-5 py-4
+                rounded-3xl
                 transition-all
-                duration-300
+                border
 
                 ${active
+
                   ? `
-                    bg-white
+                    bg-green-500
                     text-black
-                    shadow-2xl
+                    border-green-400
                   `
+
                   : `
-                    text-zinc-500
+                    text-zinc-400
+                    border-transparent
                     hover:bg-white/[0.04]
                     hover:text-white
                   `
+
                 }
               `}
             >
 
-              <div className="flex items-center gap-4">
+              <Icon size={20} />
 
-                <Icon
-                  size={18}
-                  strokeWidth={2.2}
-                />
-
-                <span className="text-[15px] font-medium">
-                  {item.title}
-                </span>
-
-              </div>
-
-              <ChevronRight
-                size={16}
-                className={`
-                  transition
-
-                  ${active
-                    ? "opacity-100"
-                    : "opacity-0 group-hover:opacity-100"
-                  }
-                `}
-              />
+              <span className="font-semibold">
+                {item.title}
+              </span>
 
             </Link>
 
@@ -190,22 +181,24 @@ export default function Sidebar() {
 
         <div
           className="
-            premium-card
+            rounded-[32px]
+            border border-green-500/20
+            bg-green-500/10
             p-5
           "
         >
 
-          <p className="text-zinc-500 text-xs uppercase tracking-[0.2em]">
-            Sistema
+          <p className="text-green-400 text-xs font-black tracking-[4px] uppercase">
+            Sistema Online
           </p>
 
-          <h2 className="text-white text-xl font-semibold mt-3 leading-tight">
-            Gestão Premium de Obras
+          <h2 className="text-white text-2xl font-black mt-3">
+            ERP Industrial
           </h2>
 
-          <p className="text-zinc-500 text-sm mt-4 leading-7">
-            Plataforma integrada para clientes,
-            obras, financeiro e produção.
+          <p className="text-zinc-400 mt-3 text-sm leading-6">
+            Controle total da produção,
+            estoque e orçamentos.
           </p>
 
         </div>
@@ -215,4 +208,5 @@ export default function Sidebar() {
     </aside>
 
   );
+
 }
