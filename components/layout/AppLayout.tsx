@@ -1,7 +1,14 @@
 "use client";
 
 import Sidebar from "./Sidebar";
-import { Bell, Search } from "lucide-react";
+
+import {
+  Search,
+  Bell,
+  Menu,
+} from "lucide-react";
+
+import { useState } from "react";
 
 export default function AppLayout({
   children,
@@ -9,143 +16,223 @@ export default function AppLayout({
   children: React.ReactNode;
 }) {
 
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   return (
 
-    <div className="flex min-h-screen bg-[#09090B] text-white overflow-hidden">
+    <div className="flex min-h-screen bg-[#060606]">
 
-      {/* SIDEBAR */}
+      {/* MOBILE SIDEBAR */}
 
-      <Sidebar />
+      {mobileOpen && (
 
-      {/* CONTEÚDO */}
+        <div
+          className="
+            fixed
+            inset-0
+            z-50
+            bg-black/70
+            backdrop-blur-sm
+            lg:hidden
+          "
+        >
 
-      <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="w-[260px] h-full">
 
-        {/* HEADER PREMIUM */}
-
-        <header className="h-[88px] border-b border-white/5 bg-black/20 backdrop-blur-2xl px-10 flex items-center justify-between sticky top-0 z-40">
-
-          {/* ESQUERDA */}
-
-          <div>
-
-            <h1 className="text-2xl font-black tracking-tight">
-              ERP PRANGE
-            </h1>
-
-            <p className="text-zinc-500 text-sm mt-1">
-              Gestão Inteligente de Obras e Clientes
-            </p>
+            <Sidebar />
 
           </div>
 
-          {/* DIREITA */}
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="absolute inset-0 -z-10"
+          />
 
-          <div className="flex items-center gap-5">
+        </div>
+
+      )}
+
+      {/* DESKTOP SIDEBAR */}
+
+      <Sidebar />
+
+      {/* CONTENT */}
+
+      <div className="flex-1 flex flex-col min-w-0">
+
+        {/* HEADER */}
+
+        <header
+          className="
+            sticky
+            top-0
+            z-40
+            h-[88px]
+            px-4
+            lg:px-10
+            flex
+            items-center
+            justify-between
+          "
+        >
+
+          {/* BG */}
+
+          <div
+            className="
+              absolute
+              inset-x-4
+              lg:inset-x-8
+              top-3
+              bottom-0
+              glass
+              rounded-[28px]
+            "
+          />
+
+          {/* LEFT */}
+
+          <div className="relative z-10 flex items-center gap-4">
+
+            {/* MOBILE MENU */}
+
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="
+                lg:hidden
+                w-11
+                h-11
+                rounded-2xl
+                glass
+                flex
+                items-center
+                justify-center
+                text-white
+              "
+            >
+
+              <Menu size={20} />
+
+            </button>
+
+            <div>
+
+              <h1 className="text-white text-2xl font-semibold tracking-tight">
+                Painel de Gestão
+              </h1>
+
+              <p className="text-zinc-500 text-sm mt-1">
+                Controle inteligente da construtora
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* RIGHT */}
+
+          <div className="relative z-10 flex items-center gap-3">
 
             {/* SEARCH */}
 
-            <div className="relative">
+            <div
+              className="
+                hidden
+                md:flex
+                items-center
+                gap-3
+                w-[260px]
+                h-[52px]
+                px-4
+                rounded-2xl
+                glass
+              "
+            >
 
               <Search
                 size={18}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500"
+                className="text-zinc-500"
               />
 
               <input
-                placeholder="Buscar clientes, obras..."
+                placeholder="Buscar..."
                 className="
-                  w-[340px]
-                  h-[52px]
-                  bg-zinc-900/80
-                  border
-                  border-zinc-800
-                  rounded-2xl
-                  pl-12
-                  pr-5
+                  bg-transparent
+                  outline-none
                   text-sm
                   text-white
-                  placeholder:text-zinc-500
-                  outline-none
-                  transition
-                  focus:border-orange-500
-                  focus:bg-zinc-900
+                  placeholder:text-zinc-600
+                  w-full
                 "
               />
 
             </div>
 
-            {/* NOTIFICAÇÕES */}
+            {/* NOTIFICATION */}
 
             <button
               className="
-                relative
-                w-12
-                h-12
+                w-[52px]
+                h-[52px]
                 rounded-2xl
-                border
-                border-zinc-800
-                bg-zinc-900/80
+                glass
                 flex
                 items-center
                 justify-center
-                hover:border-orange-500
+                text-zinc-400
+                hover:text-white
                 transition
               "
             >
 
-              <Bell size={20} />
-
-              <div className="absolute top-2 right-2 w-2 h-2 bg-orange-500 rounded-full" />
+              <Bell size={18} />
 
             </button>
 
-            {/* PERFIL */}
+            {/* PROFILE */}
 
             <div
               className="
+                h-[52px]
+                px-2
+                pr-4
+                rounded-2xl
+                glass
                 flex
                 items-center
-                gap-4
-                bg-zinc-900/80
-                border
-                border-zinc-800
-                rounded-2xl
-                px-4
-                py-2
+                gap-3
               "
             >
 
-              <div className="text-right">
-
-                <h3 className="text-sm font-bold">
-                  João Prange
-                </h3>
-
-                <p className="text-xs text-zinc-500">
-                  Administrador
-                </p>
-
-              </div>
-
               <div
                 className="
-                  w-12
-                  h-12
-                  rounded-2xl
-                  bg-gradient-to-br
-                  from-orange-500
-                  to-orange-700
+                  w-10
+                  h-10
+                  rounded-xl
+                  bg-white
+                  text-black
                   flex
                   items-center
                   justify-center
-                  font-black
-                  text-white
-                  shadow-lg
-                  shadow-orange-500/20
+                  font-semibold
+                  text-sm
                 "
               >
+
                 JP
+
+              </div>
+
+              <div className="hidden lg:block">
+
+                <p className="text-white text-sm font-medium">
+                  João Prange
+                </p>
+
+                <p className="text-zinc-500 text-xs">
+                  Administrador
+                </p>
+
               </div>
 
             </div>
@@ -156,13 +243,18 @@ export default function AppLayout({
 
         {/* MAIN */}
 
-        <main className="flex-1 overflow-y-auto p-8">
+        <main
+          className="
+            flex-1
+            px-4
+            lg:px-10
+            pb-10
+            pt-6
+            overflow-auto
+          "
+        >
 
-          <div className="max-w-[1700px] mx-auto">
-
-            {children}
-
-          </div>
+          {children}
 
         </main>
 

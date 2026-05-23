@@ -3,41 +3,46 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import {
+  LayoutDashboard,
+  Users,
+  Building2,
+  ClipboardList,
+  Wallet,
+  Package,
+  ChevronRight,
+} from "lucide-react";
+
 const menus = [
   {
     title: "Dashboard",
-    href: "/",
-    icon: "◩",
+    href: "/dashboard",
+    icon: LayoutDashboard,
   },
   {
     title: "Clientes",
     href: "/clientes",
-    icon: "👥",
+    icon: Users,
   },
   {
     title: "Obras",
     href: "/obras",
-    icon: "🏗️",
+    icon: Building2,
   },
   {
     title: "Orçamentos",
     href: "/orcamentos",
-    icon: "📋",
-  },
-  {
-    title: "Produção",
-    href: "/producao",
-    icon: "🧱",
+    icon: ClipboardList,
   },
   {
     title: "Financeiro",
     href: "/financeiro",
-    icon: "💰",
+    icon: Wallet,
   },
   {
     title: "Estoque",
     href: "/estoque",
-    icon: "📦",
+    icon: Package,
   },
 ];
 
@@ -47,33 +52,73 @@ export default function Sidebar() {
 
   return (
 
-    <aside className="w-[280px] bg-[#09090b] border-r border-zinc-800 h-screen p-5 flex flex-col">
+    <aside
+      className="
+        hidden
+        lg:flex
+        w-[250px]
+        min-h-screen
+        flex-col
+        px-5
+        py-6
+        border-r
+        border-white/5
+        bg-black/20
+        backdrop-blur-3xl
+      "
+    >
 
-      {/* LOGO */}
+      {/* TOPO */}
 
-      <div className="mb-10">
+      <div className="mb-14 px-2">
 
-        <p className="text-orange-500 uppercase tracking-[5px] text-xs font-black">
-          PRANGE ERP
-        </p>
+        <div className="flex items-center gap-4">
 
-        <h1 className="text-white text-3xl font-black mt-2">
-          PRANGEBLOCOBR
-        </h1>
+          <div
+            className="
+              w-11
+              h-11
+              rounded-2xl
+              bg-white
+              text-black
+              flex
+              items-center
+              justify-center
+              font-black
+              text-sm
+            "
+          >
 
-        <p className="text-zinc-500 mt-2 text-sm">
-          Sistema Integrado Industrial
-        </p>
+            PB
+
+          </div>
+
+          <div>
+
+            <p className="text-[11px] uppercase tracking-[0.25em] text-zinc-500">
+              PRANGE ERP
+            </p>
+
+            <h1 className="text-white text-lg font-semibold mt-1 tracking-tight">
+              PrangeBlocoBR
+            </h1>
+
+          </div>
+
+        </div>
 
       </div>
 
       {/* MENU */}
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1">
 
         {menus.map((item) => {
 
-          const active = pathname === item.href;
+          const active =
+            pathname === item.href;
+
+          const Icon = item.icon;
 
           return (
 
@@ -81,21 +126,55 @@ export default function Sidebar() {
               key={item.href}
               href={item.href}
               className={`
-                flex items-center gap-4 px-5 py-4 rounded-2xl transition-all
+                group
+                flex
+                items-center
+                justify-between
+                px-4
+                h-[56px]
+                rounded-2xl
+                transition-all
+                duration-300
+
                 ${active
-                  ? "bg-orange-600 text-white shadow-lg shadow-orange-500/20"
-                  : "text-zinc-400 hover:bg-zinc-900 hover:text-white"
+                  ? `
+                    bg-white
+                    text-black
+                    shadow-2xl
+                  `
+                  : `
+                    text-zinc-500
+                    hover:bg-white/[0.04]
+                    hover:text-white
+                  `
                 }
               `}
             >
 
-              <span className="text-xl">
-                {item.icon}
-              </span>
+              <div className="flex items-center gap-4">
 
-              <span className="font-semibold text-[15px]">
-                {item.title}
-              </span>
+                <Icon
+                  size={18}
+                  strokeWidth={2.2}
+                />
+
+                <span className="text-[15px] font-medium">
+                  {item.title}
+                </span>
+
+              </div>
+
+              <ChevronRight
+                size={16}
+                className={`
+                  transition
+
+                  ${active
+                    ? "opacity-100"
+                    : "opacity-0 group-hover:opacity-100"
+                  }
+                `}
+              />
 
             </Link>
 
@@ -109,18 +188,24 @@ export default function Sidebar() {
 
       <div className="mt-auto">
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5">
+        <div
+          className="
+            premium-card
+            p-5
+          "
+        >
 
-          <p className="text-zinc-500 text-xs uppercase tracking-[3px]">
+          <p className="text-zinc-500 text-xs uppercase tracking-[0.2em]">
             Sistema
           </p>
 
-          <h2 className="text-white text-xl font-black mt-2">
-            ERP Prange
+          <h2 className="text-white text-xl font-semibold mt-3 leading-tight">
+            Gestão Premium de Obras
           </h2>
 
-          <p className="text-zinc-500 mt-2 text-sm leading-6">
-            Gestão integrada da fábrica e construtora.
+          <p className="text-zinc-500 text-sm mt-4 leading-7">
+            Plataforma integrada para clientes,
+            obras, financeiro e produção.
           </p>
 
         </div>
