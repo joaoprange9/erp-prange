@@ -29,25 +29,42 @@ export default function AppLayout({
 
       {/* MOBILE MENU */}
 
-      {open && (
+{open && (
 
-        <div
-          className="
-            fixed inset-0 z-50
-            bg-black/70 backdrop-blur-sm
-            md:hidden
-          "
-        >
+  <div
+    className="
+      fixed inset-0 z-50 md:hidden
+    "
+  >
 
-          <div className="w-[280px] h-full">
+    {/* BACKDROP */}
 
-            <Sidebar />
+    <div
+      onClick={() => setOpen(false)}
+      className="
+        absolute inset-0
+        bg-black/70
+        backdrop-blur-sm
+      "
+    />
 
-          </div>
+    {/* MENU */}
 
-        </div>
+    <div
+      className="
+        relative z-50
+        w-[280px]
+        h-full
+      "
+    >
 
-      )}
+      <Sidebar />
+
+    </div>
+
+  </div>
+
+)}
 
       {/* CONTENT */}
 
