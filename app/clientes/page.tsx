@@ -1,73 +1,111 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
+import Link from "next/link";
+
 import AppLayout from "../../components/layout/AppLayout";
+
+import { supabase } from "../../lib/supabase";
 
 import {
 
-  Users,
-  UserPlus,
-  Phone,
-  Mail,
-  MapPin,
-  Building2,
-  Search,
   Plus,
+  Phone,
+  MapPin,
+  Users,
+  X,
 
 } from "lucide-react";
 
-import { useState } from "react";
-
 export default function ClientesPage() {
 
-  const [search, setSearch] =
+  const [clientes, setClientes] =
+    useState<any[]>([]);
+
+  const [open, setOpen] =
+    useState(false);
+
+  const [nome, setNome] =
     useState("");
 
-  const clientes = [
+  const [telefone, setTelefone] =
+    useState("");
 
-    {
-      nome: "Construtora Silva",
-      telefone: "(47) 99999-1111",
-      email: "contato@silva.com",
-      cidade: "Balneário Camboriú",
-      obras: 4,
-    },
+  const [cidade, setCidade] =
+    useState("");
 
-    {
-      nome: "Almeida Engenharia",
-      telefone: "(47) 98888-2222",
-      email: "engenharia@almeida.com",
-      cidade: "Itapema",
-      obras: 2,
-    },
+  // ======================================================
+  // CARREGAR CLIENTES
+  // ======================================================
 
-    {
-      nome: "Costa Obras",
-      telefone: "(47) 97777-3333",
-      email: "contato@costa.com",
-      cidade: "Itajaí",
-      obras: 7,
-    },
+  useEffect(() => {
 
-    {
-      nome: "MZ Construtora",
-      telefone: "(47) 96666-4444",
-      email: "mz@construtora.com",
-      cidade: "Camboriú",
-      obras: 3,
-    },
+    carregarClientes();
 
-  ];
+  }, []);
 
-  const clientesFiltrados =
-    clientes.filter((cliente) =>
+  async function carregarClientes() {
 
-      cliente.nome
-        .toLowerCase()
-        .includes(
-          search.toLowerCase()
-        )
+    const { data, error } =
+      await supabase
+        .from("clientes")
+        .select("*")
+        .order("id", {
+          ascending: false,
+        });
 
-    );
+    if (error) {
+
+      console.log(error);
+
+      return;
+
+    }
+
+    setClientes(data || []);
+
+  }
+
+  // ======================================================
+  // ADICIONAR CLIENTE
+  // ======================================================
+
+  async function adicionarCliente() {
+
+    if (!nome) return;
+
+    const { error } =
+      await supabase
+        .from("clientes")
+        .insert([
+
+          {
+            nome,
+            telefone,
+            cidade,
+            status: "Ativo",
+          },
+
+        ]);
+
+    if (error) {
+
+      console.log(error);
+
+      return;
+
+    }
+
+    await carregarClientes();
+
+    setNome("");
+    setTelefone("");
+    setCidade("");
+
+    setOpen(false);
+
+  }
 
   return (
 
@@ -85,18 +123,21 @@ export default function ClientesPage() {
             border border-white/10
             bg-gradient-to-br
             from-green-500/10
+            via-black
             to-black
             p-5 md:p-8
           "
         >
 
+          {/* GLOW */}
+
           <div
             className="
               absolute
-              top-0
               right-0
-              w-[300px]
-              h-[300px]
+              top-0
+              w-[320px]
+              h-[320px]
               rounded-full
               bg-green-500/10
               blur-[120px]
@@ -107,13 +148,16 @@ export default function ClientesPage() {
 
             <div
               className="
-                flex flex-col
-                xl:flex-row
-                xl:items-center
-                xl:justify-between
-                gap-6
+                flex
+                flex-col
+                md:flex-row
+                md:items-center
+                md:justify-between
+                gap-5
               "
             >
+
+              {/* TEXTOS */}
 
               <div>
 
@@ -131,34 +175,36 @@ export default function ClientesPage() {
 
                 <h1
                   className="
-                    text-white
                     text-3xl md:text-6xl
                     font-black
-                    mt-4
+                    text-white
+                    mt-3
                     leading-none
                   "
                 >
-                  Gestão inteligente
+                  Gestão de
                   <br />
-                  de clientes.
+                  Clientes
                 </h1>
 
                 <p
                   className="
                     text-zinc-400
-                    mt-5
-                    text-base md:text-lg
-                    max-w-[700px]
+                    mt-4
+                    text-sm md:text-base
+                    max-w-[600px]
                   "
                 >
-                  Controle total dos clientes,
-                  construtoras e parceiros
-                  comerciais da operação.
+                  Controle completo dos clientes,
+                  construtoras e parceiros da operação.
                 </p>
 
               </div>
 
+              {/* BOTÃO */}
+
               <button
+                onClick={() => setOpen(true)}
                 className="
                   h-14
                   px-6
@@ -169,6 +215,7 @@ export default function ClientesPage() {
                   text-black
                   font-black
                   flex items-center justify-center gap-3
+                  shadow-lg shadow-green-500/20
                 "
               >
 
@@ -189,145 +236,121 @@ export default function ClientesPage() {
         <div
           className="
             grid
-            grid-cols-1 md:grid-cols-2 xl:grid-cols-4
+            grid-cols-1 md:grid-cols-3
             gap-4
-          "
-        >
-
-          {[
-
-            {
-              title: "Clientes",
-              value: "24",
-              icon: Users,
-            },
-
-            {
-              title: "Novos",
-              value: "3",
-              icon: UserPlus,
-            },
-
-            {
-              title: "Obras",
-              value: "16",
-              icon: Building2,
-            },
-
-            {
-              title: "Ativos",
-              value: "100%",
-              icon: Users,
-            },
-
-          ].map((item) => {
-
-            const Icon =
-              item.icon;
-
-            return (
-
-              <div
-                key={item.title}
-                className="
-                  mobile-card
-                  rounded-[28px]
-                  border border-white/10
-                  bg-white/[0.03]
-                  p-5 md:p-6
-                "
-              >
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-zinc-500 text-sm">
-                      {item.title}
-                    </p>
-
-                    <h2
-                      className="
-                        text-white
-                        text-3xl md:text-5xl
-                        font-black
-                        mt-3
-                      "
-                    >
-                      {item.value}
-                    </h2>
-
-                  </div>
-
-                  <div
-                    className="
-                      w-14 h-14
-                      rounded-2xl
-                      bg-green-500/10
-                      border border-green-500/20
-                      flex items-center justify-center
-                    "
-                  >
-
-                    <Icon
-                      size={24}
-                      className="text-green-400"
-                    />
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            );
-
-          })}
-
-        </div>
-
-        {/* PESQUISA */}
-
-        <div
-          className="
-            rounded-[28px]
-            border border-white/10
-            bg-white/[0.03]
-            p-4 md:p-6
           "
         >
 
           <div
             className="
-              flex items-center gap-3
-              h-14
-              rounded-2xl
+              rounded-[28px]
               border border-white/10
-              bg-black/30
-              px-4
+              bg-white/[0.03]
+              p-5 md:p-6
             "
           >
 
-            <Search
-              size={20}
-              className="text-zinc-500"
-            />
+            <div className="flex items-center justify-between">
 
-            <input
-              value={search}
-              onChange={(e) =>
-                setSearch(
-                  e.target.value
-                )
-              }
-              placeholder="Buscar cliente..."
+              <div>
+
+                <p className="text-zinc-500 text-sm">
+                  Clientes
+                </p>
+
+                <h2
+                  className="
+                    text-4xl md:text-5xl
+                    text-white
+                    font-black
+                    mt-3
+                  "
+                >
+                  {clientes.length}
+                </h2>
+
+              </div>
+
+              <div
+                className="
+                  w-14 h-14
+                  rounded-2xl
+                  bg-green-500/10
+                  border border-green-500/20
+                  flex items-center justify-center
+                "
+              >
+
+                <Users
+                  size={24}
+                  className="text-green-400"
+                />
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <div
+            className="
+              rounded-[28px]
+              border border-white/10
+              bg-white/[0.03]
+              p-5 md:p-6
+            "
+          >
+
+            <p className="text-zinc-500 text-sm">
+              Clientes Ativos
+            </p>
+
+            <h2
               className="
-                flex-1
-                bg-transparent
-                outline-none
+                text-4xl md:text-5xl
                 text-white
+                font-black
+                mt-3
               "
-            />
+            >
+              {clientes.length}
+            </h2>
+
+            <p className="text-green-400 mt-3 text-sm font-semibold">
+              Todos ativos
+            </p>
+
+          </div>
+
+          <div
+            className="
+              rounded-[28px]
+              border border-white/10
+              bg-gradient-to-br
+              from-green-500/15
+              to-black
+              p-5 md:p-6
+            "
+          >
+
+            <p className="text-green-400 text-sm font-bold uppercase tracking-[3px]">
+              Sistema Online
+            </p>
+
+            <h2
+              className="
+                text-3xl md:text-4xl
+                text-white
+                font-black
+                mt-4
+              "
+            >
+              ERP Industrial
+            </h2>
+
+            <p className="text-zinc-400 mt-3 text-sm">
+              Gestão integrada de clientes e obras.
+            </p>
 
           </div>
 
@@ -335,94 +358,123 @@ export default function ClientesPage() {
 
         {/* CLIENTES */}
 
-        <div className="space-y-4">
+        {clientes.length === 0 ? (
 
-          {clientesFiltrados.map((cliente) => (
+          <div
+            className="
+              rounded-[32px]
+              border border-white/10
+              bg-white/[0.03]
+              p-10 md:p-14
+              text-center
+            "
+          >
 
-            <div
-              key={cliente.nome}
+            <h2
               className="
-                rounded-[28px]
-                border border-white/10
-                bg-white/[0.03]
-                p-5 md:p-6
-                hover:bg-white/[0.05]
-                transition
+                text-3xl md:text-4xl
+                font-black
+                text-white
               "
             >
+              Nenhum cliente cadastrado
+            </h2>
 
-              <div
+            <p className="text-zinc-500 mt-4">
+              Cadastre seu primeiro cliente.
+            </p>
+
+          </div>
+
+        ) : (
+
+          <div
+            className="
+              grid
+              grid-cols-1 md:grid-cols-2 xl:grid-cols-3
+              gap-5
+            "
+          >
+
+            {clientes.map((cliente) => (
+
+              <Link
+                href={`/clientes/${cliente.id}`}
+                key={cliente.id}
                 className="
-                  flex flex-col
-                  xl:flex-row
-                  xl:items-center
-                  xl:justify-between
-                  gap-6
+                  group
+                  rounded-[30px]
+                  border border-white/10
+                  bg-white/[0.03]
+                  p-5 md:p-6
+                  hover:border-green-500/40
+                  hover:bg-green-500/[0.04]
+                  transition-all
+                  duration-300
+                  block
                 "
               >
 
-                {/* LEFT */}
+                {/* TOP */}
 
-                <div>
+                <div className="flex items-start justify-between gap-4">
 
-                  <div className="flex items-center gap-4">
+                  <div>
 
-                    <div
+                    <p
                       className="
-                        w-14 h-14
-                        rounded-2xl
-                        bg-green-500/10
-                        border border-green-500/20
-                        flex items-center justify-center
+                        text-green-400
+                        text-xs
+                        font-black
+                        uppercase
+                        tracking-[4px]
                       "
                     >
+                      Cliente
+                    </p>
 
-                      <Users
-                        size={24}
-                        className="text-green-400"
-                      />
+                    <h2
+                      className="
+                        text-2xl md:text-3xl
+                        font-black
+                        text-white
+                        mt-3
+                        leading-tight
+                      "
+                    >
+                      {cliente.nome}
+                    </h2>
 
-                    </div>
+                  </div>
 
-                    <div>
-
-                      <h2
-                        className="
-                          text-white
-                          text-xl md:text-2xl
-                          font-black
-                        "
-                      >
-                        {cliente.nome}
-                      </h2>
-
-                      <p className="text-zinc-500 text-sm mt-1">
-                        Cliente ativo
-                      </p>
-
-                    </div>
-
+                  <div
+                    className="
+                      px-4 py-2
+                      rounded-2xl
+                      bg-green-500/10
+                      border border-green-500/20
+                      text-green-400
+                      text-xs
+                      font-bold
+                      whitespace-nowrap
+                    "
+                  >
+                    {cliente.status}
                   </div>
 
                 </div>
 
-                {/* RIGHT */}
+                {/* INFO */}
 
-                <div
-                  className="
-                    grid
-                    grid-cols-1 md:grid-cols-3
-                    gap-4
-                    w-full
-                    xl:w-auto
-                  "
-                >
+                <div className="mt-8 space-y-4">
 
                   <div
                     className="
+                      flex items-center justify-between
+                      gap-3
                       rounded-2xl
                       bg-black/30
-                      border border-white/10
+                      border border-white/5
                       px-4 py-3
                     "
                   >
@@ -430,55 +482,35 @@ export default function ClientesPage() {
                     <div className="flex items-center gap-2">
 
                       <Phone
-                        size={16}
+                        size={15}
                         className="text-green-400"
                       />
 
-                      <p className="text-zinc-500 text-xs">
+                      <p className="text-zinc-500 text-sm">
                         Telefone
                       </p>
 
                     </div>
 
-                    <p className="text-white mt-2 font-semibold">
-                      {cliente.telefone}
+                    <p
+                      className="
+                        text-white
+                        font-semibold
+                        text-sm
+                      "
+                    >
+                      {cliente.telefone || "-"}
                     </p>
 
                   </div>
 
                   <div
                     className="
+                      flex items-center justify-between
+                      gap-3
                       rounded-2xl
                       bg-black/30
-                      border border-white/10
-                      px-4 py-3
-                    "
-                  >
-
-                    <div className="flex items-center gap-2">
-
-                      <Mail
-                        size={16}
-                        className="text-green-400"
-                      />
-
-                      <p className="text-zinc-500 text-xs">
-                        E-mail
-                      </p>
-
-                    </div>
-
-                    <p className="text-white mt-2 font-semibold break-all">
-                      {cliente.email}
-                    </p>
-
-                  </div>
-
-                  <div
-                    className="
-                      rounded-2xl
-                      bg-black/30
-                      border border-white/10
+                      border border-white/5
                       px-4 py-3
                     "
                   >
@@ -486,31 +518,240 @@ export default function ClientesPage() {
                     <div className="flex items-center gap-2">
 
                       <MapPin
-                        size={16}
+                        size={15}
                         className="text-green-400"
                       />
 
-                      <p className="text-zinc-500 text-xs">
+                      <p className="text-zinc-500 text-sm">
                         Cidade
                       </p>
 
                     </div>
 
-                    <p className="text-white mt-2 font-semibold">
-                      {cliente.cidade}
+                    <p
+                      className="
+                        text-white
+                        font-semibold
+                        text-sm
+                      "
+                    >
+                      {cliente.cidade || "-"}
                     </p>
 
                   </div>
 
                 </div>
 
+              </Link>
+
+            ))}
+
+          </div>
+
+        )}
+
+        {/* MODAL */}
+
+        {open && (
+
+          <div
+            className="
+              fixed inset-0
+              z-50
+              bg-black/70
+              backdrop-blur-sm
+              flex items-center justify-center
+              p-4
+            "
+          >
+
+            <div
+              className="
+                w-full max-w-[520px]
+                rounded-[32px]
+                border border-white/10
+                bg-[#0a0a0a]
+                p-6 md:p-7
+              "
+            >
+
+              {/* HEADER */}
+
+              <div className="flex items-center justify-between mb-8">
+
+                <div>
+
+                  <p
+                    className="
+                      text-green-400
+                      uppercase
+                      tracking-[4px]
+                      text-xs
+                      font-black
+                    "
+                  >
+                    NOVO CLIENTE
+                  </p>
+
+                  <h2
+                    className="
+                      text-2xl md:text-4xl
+                      font-black
+                      text-white
+                      mt-3
+                    "
+                  >
+                    Cadastrar Cliente
+                  </h2>
+
+                </div>
+
+                <button
+                  onClick={() => setOpen(false)}
+                  className="
+                    w-11 h-11
+                    rounded-2xl
+                    bg-white/5
+                    border border-white/10
+                    flex items-center justify-center
+                    text-zinc-400
+                    hover:text-white
+                    transition
+                  "
+                >
+
+                  <X size={18} />
+
+                </button>
+
+              </div>
+
+              {/* INPUTS */}
+
+              <div className="space-y-5">
+
+                <div>
+
+                  <label className="text-zinc-500 text-sm">
+                    Nome
+                  </label>
+
+                  <input
+                    value={nome}
+                    onChange={(e) =>
+                      setNome(e.target.value)
+                    }
+                    className="
+                      w-full
+                      mt-2
+                      h-14
+                      rounded-2xl
+                      bg-black/40
+                      border border-white/10
+                      px-5
+                      text-white
+                      outline-none
+                    "
+                  />
+
+                </div>
+
+                <div>
+
+                  <label className="text-zinc-500 text-sm">
+                    Telefone
+                  </label>
+
+                  <input
+                    value={telefone}
+                    onChange={(e) =>
+                      setTelefone(e.target.value)
+                    }
+                    className="
+                      w-full
+                      mt-2
+                      h-14
+                      rounded-2xl
+                      bg-black/40
+                      border border-white/10
+                      px-5
+                      text-white
+                      outline-none
+                    "
+                  />
+
+                </div>
+
+                <div>
+
+                  <label className="text-zinc-500 text-sm">
+                    Cidade
+                  </label>
+
+                  <input
+                    value={cidade}
+                    onChange={(e) =>
+                      setCidade(e.target.value)
+                    }
+                    className="
+                      w-full
+                      mt-2
+                      h-14
+                      rounded-2xl
+                      bg-black/40
+                      border border-white/10
+                      px-5
+                      text-white
+                      outline-none
+                    "
+                  />
+
+                </div>
+
+              </div>
+
+              {/* BOTÕES */}
+
+              <div className="flex gap-3 mt-8">
+
+                <button
+                  onClick={() => setOpen(false)}
+                  className="
+                    flex-1
+                    h-14
+                    rounded-2xl
+                    bg-white/5
+                    border border-white/10
+                    text-white
+                    font-bold
+                  "
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  onClick={adicionarCliente}
+                  className="
+                    flex-1
+                    h-14
+                    rounded-2xl
+                    bg-green-500
+                    hover:bg-green-400
+                    transition
+                    text-black
+                    font-black
+                  "
+                >
+                  Salvar Cliente
+                </button>
+
               </div>
 
             </div>
 
-          ))}
+          </div>
 
-        </div>
+        )}
 
       </div>
 
